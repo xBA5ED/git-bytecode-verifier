@@ -7,7 +7,7 @@ This script does not check the arguments the contract was deployed with, it only
 # Usage
 
 ```
-bash ./verify.sh [OPTIONS] --contract=<CONTRACT_NAME> --tx=<DEPLOYMENT_TX> --repo=<GIT_URL>";
+bash ./verify.sh [OPTIONS] --contract=<CONTRACT_NAME> --tx=<DEPLOYMENT_TX> --repo=<GIT_URL>
 ```
 
 Additional options:
