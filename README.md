@@ -22,8 +22,8 @@ Additional options:
 |`--optimizer-runs=<N>`| If set the optimizer gets enabled and ran with the N specified (ex. 200)|
 |`--evm-version=<NAME>`| EVM version to compile for (ex. london)|
 |`--via-ir`|Will compile using the yul pipeline|
+|`--no-clean`|Will not remove the newly cloned project folder after checking|
 |`--debug`|Will dump the bytecode to stdout|
-|   |   |
 
 
 ## Examples
@@ -53,6 +53,6 @@ bash verify.sh \
 In order to use this you need to have installed the following:
 - Bash
 - [Foundry](https://getfoundry.sh/)
-- [Yarn](https://yarnpkg.com/)
+- [Yarn](https://yarnpkg.com/) or [NPM](https://nodejs.org/en/)
 
 Clone or download the `verify.sh` script.

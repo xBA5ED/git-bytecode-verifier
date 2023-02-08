@@ -1,5 +1,5 @@
 #!/bin/bash
-RPC_URL=https://uk.rpc.blxrbdn.com
+RPC_URL=https://rpc.payload.de
 SOLC_METADATA_DELIMITER=a264
 
 while [ $# -gt 0 ]; do
@@ -31,6 +31,9 @@ while [ $# -gt 0 ]; do
     --via-ir)
       VIA_IR="--via-ir"
       ;;
+    --no-clean)
+      NO_CLEAN="true"
+      ;;
     --debug)
       DEBUG="true"
       ;;
@@ -53,6 +56,8 @@ if [[ "$CONTRACT_NAME" == "" || "$DEPLOYMENT_TX" == "" || "$PROJECT_REPO" == "" 
     echo "  --optimizer-runs=<NUMBER_OF_RUNS>";
     echo "  --evm-version=<EVM_VERSION_NAME>";
     echo "  --via-ir";
+    echo "  --no-clean";
+    echo "  --debug";
     exit 1;
 fi
 
@@ -75,11 +80,33 @@ if [ "$COMMIT" != "" ]; then
     git checkout $COMMIT 1> /dev/null 2>&1
 fi
 
-# Clone the submodules
-forge install 1> /dev/null
+# Check if foundry/forge is installed
+if ! command -v forge >/dev/null 2>&1; then
+    echo "Error: Foundry (forge) was not found in your path, is it installed?";
+    exit 1;
+fi
 
-# Install the needed packages
-yarn install 1> /dev/null
+# Check if this repo uses forge libraries, if so install them
+if [ -f "foundry.toml" ]; then
+    # Clone the submodules
+    forge install 1> /dev/null
+fi 
+
+# Check if this repo uses npm packages, if so install them
+if [ -f "package.json" ]; then
+  # See if we can use yarn, otherwise check if we can use npm
+  if command -v yarn >/dev/null 2>&1; then
+    echo "Installing project dependicies using yarn..."
+    #yarn upgrade
+    yarn install 1> /dev/null
+  elif command -v npm >/dev/null 2>&1; then
+    echo "Installing project dependicies using npm..."
+    npm install 1> /dev/null
+  else
+    echo "Error: No package manager was found. Install Yarn or NPM."
+    exit 1;
+  fi
+fi
 
 echo "Fetching deployment transaction bytecode...";
 DEPLOYMENT_BYTECODE=$(cast tx --rpc-url $RPC_URL $DEPLOYMENT_TX input)
@@ -102,4 +129,4 @@ fi
 
 # Get out of the temp folder and delete it
 cd ~
-rm -rf $TEMP_FOLDER
+if [ "$NO_CLEAN" == "" ]; then rm -rf $TEMP_FOLDER; fi
